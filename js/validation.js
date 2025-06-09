@@ -1,103 +1,169 @@
-function checkTaiKhoan(taiKhoan, employees, isEdit = false) {
-    const taiKhoanPattern = /^\d{4,6}$/;
-    if (!taiKhoan) {
-        return "Tài khoản không được để trống!";
-    } else if (!taiKhoanPattern.test(taiKhoan)) {
-        return "Tài khoản phải là số và có 4-6 ký tự!";
-    } else if (!isEdit && employees.some(emp => emp.taiKhoan === taiKhoan)) {
-        return "Tài khoản đã tồn tại!";
-    }
-    return "";
-}
+import { getEle } from "./main.js";
 
-function checkHoVaTen(hoVaTen) {
-    const hoVaTenPattern = /^[a-zA-Z\sÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸ]+$/;
-    if (!hoVaTen) {
-        return "Tên nhân viên không được để trống!";
-    } else if (!hoVaTenPattern.test(hoVaTen)) {
-        return "Tên nhân viên chỉ được chứa chữ cái và khoảng trắng!";
+class Validation {
+    checkAccount(account, mess) {
+        const pattern = /^\d{4,6}$/;
+        if (!pattern.test(account)) {
+            document.getElementById("tbTKNV").innerHTML = mess;
+            document.getElementById("tbTKNV").style.display = "block";
+            return false;
+        }
+        document.getElementById("tbTKNV").innerHTML = mess;
+        document.getElementById("tbTKNV").style.display = "none";
+        return true;
     }
-    return "";
-}
-
-function checkEmail(email) {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email) {
-        return "Email không được để trống!";
-    } else if (!emailPattern.test(email)) {
-        return "Email không đúng định dạng!";
+checkName(name, message) {
+    const pattern = /^[a-zA-ZÀ-ỹ\s]+$/;
+    if (!pattern.test(name)) {
+        document.getElementById("tbTen").innerHTML = message;
+        document.getElementById("tbTen").style.display = "block";
+        return false;
     }
-    return "";
-}
 
-function checkMatKhau(matKhau, isEdit = false) {
-    const matKhauPattern = /^(?=.*\d)(?=.*[A-Z])(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,10}$/;
-    if (!matKhau && !isEdit) {
-        return "Mật khẩu không được để trống!";
-    } else if (matKhau && !matKhauPattern.test(matKhau)) {
-        return "Mật khẩu phải 6-10 ký tự, chứa ít nhất 1 số, 1 chữ in hoa, 1 ký tự đặc biệt (!@#$%^&*)!";
+    document.getElementById("tbTen").innerHTML = "";
+    document.getElementById("tbTen").style.display = "none";
+    return true;
+}
+    checkEmpty(value, idNoti, mess) {
+        if (value === "") {
+            // show thông báo lỗi ra ngoài
+            // tạo câu thông báo => gán ra ngoài thẻ inform
+            document.getElementById(idNoti).innerHTML = mess;
+
+            // dom tới #id-inform => display: block
+            document.getElementById(idNoti).style.display = "block";
+            return false;
+        }
+
+        document.getElementById(idNoti).innerHTML = "";
+        document.getElementById(idNoti).style.display = "none";
+        return true;
     }
-    return "";
-}
 
-function checkNgayLam(ngayLam) {
-    const ngayLamPattern = /^(0[1-9]|1[0-2])\/(0[1-9]|[12]\d|3[01])\/\d{4}$/;
-    if (!ngayLam) {
-        return "Ngày làm không được để trống!";
-    } else if (!ngayLamPattern.test(ngayLam)) {
-        return "Ngày làm phải có định dạng mm/dd/yyyy!";
+    checkCharacterLength(value, idNoti, mess, min, max) {
+        if (min <= value.trim().length && value.trim().length <= max) {
+            getEle(idNoti).innerHTML = "";
+            getEle(idNoti).style.display = "none";
+            return true;
+        }
+
+        getEle(idNoti).innerHTML = mess;
+        getEle(idNoti).style.display = "block";
+        return false;
     }
-    return "";
-}
 
-function checkLuongCB(luongCB) {
-    const luong = parseFloat(luongCB);
-    if (!luongCB) {
-        return "Lương cơ bản không được để trống!";
-    } else if (isNaN(luong) || luong < 1000000 || luong > 20000000) {
-        return "Lương cơ bản phải từ 1,000,000 đến 20,000,000!";
+    checkString(value, idNoti, mess) {
+        const letter =
+            "^[a-zA-Z_ÀÁÂÃÈÉÊẾÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶ" +
+            "ẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợ" +
+            "ụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\\s]+$";
+        if (value.match(letter)) {
+            getEle(idNoti).innerHTML = "";
+            getEle(idNoti).style.display = "none";
+            return true;
+        }
+
+        getEle(idNoti).innerHTML = mess;
+        getEle(idNoti).style.display = "block";
+        return false;
     }
-    return "";
-}
+    checkLuongCoBan(luong, message) {
+    const luongNumber = Number(luong);
+    if (isNaN(luongNumber) || luongNumber < 1000000 || luongNumber > 20000000) {
+        document.getElementById("tbLuongCB").innerHTML = message;
+        document.getElementById("tbLuongCB").style.display = "block";
+        return false;
+    }
 
-function checkChucVu(chucVu) {
+    document.getElementById("tbLuongCB").innerHTML = "";
+    document.getElementById("tbLuongCB").style.display = "none";
+    return true;
+}
+checkChucVu(chucVu, message) {
     const validChucVu = ["Sếp", "Trưởng phòng", "Nhân viên"];
-    if (!chucVu) {
-        return "Vui lòng chọn chức vụ hợp lệ!";
-    } else if (!validChucVu.includes(chucVu)) {
-        return "Chức vụ không hợp lệ!";
+    if (!validChucVu.includes(chucVu)) {
+        document.getElementById("tbChucVu").innerHTML = message;
+        document.getElementById("tbChucVu").style.display = "block";
+        return false;
     }
-    return "";
+    document.getElementById("tbChucVu").innerHTML = "";
+    document.getElementById("tbChucVu").style.display = "none";
+    return true;
 }
-
-function checkGioLam(gioLam) {
-    const gio = parseInt(gioLam);
-    if (!gioLam) {
-        return "Giờ làm không được để trống!";
-    } else if (isNaN(gio) || gio < 80 || gio > 200) {
-        return "Giờ làm phải từ 80 đến 200 giờ!";
+checkGioLam(gioLam, message) {
+ 
+    const gio = Number(gioLam);
+    if (isNaN(gio) || gio < 80 || gio > 200) {
+        document.getElementById("tbGiolam").innerHTML = message;
+        document.getElementById("tbGiolam").style.display = "block";
+        return false;
     }
-    return "";
+
+    document.getElementById("tbGiolam").innerHTML = "";
+    document.getElementById("tbGiolam").style.display = "none";
+    return true;
 }
 
-function checkForm(taiKhoan, hoVaTen, email, matKhau, ngayLam, luongCB, chucVu, gioLam, employees, isEdit = false) {
-    const errors = [
-        { id: "tbTKNV", message: checkTaiKhoan(taiKhoan, employees, isEdit) },
-        { id: "tbTen", message: checkHoVaTen(hoVaTen) },
-        { id: "tbEmail", message: checkEmail(email) },
-        { id: "tbMatKhau", message: checkMatKhau(matKhau, isEdit) },
-        { id: "tbNgay", message: checkNgayLam(ngayLam) },
-        { id: "tbLuongCB", message: checkLuongCB(luongCB) },
-        { id: "tbChucVu", message: checkChucVu(chucVu) },
-        { id: "tbGiolam", message: checkGioLam(gioLam) }
-    ];
 
-    errors.forEach(error => showError(error.id, error.message));
-    return errors.every(error => error.message === "");
+checkPassword(password, message) {
+    const pattern = /^(?=.*\d)(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{6,10}$/;
+
+    if (!pattern.test(password)) {
+        document.getElementById("tbMatKhau").innerHTML =message;
+        document.getElementById("tbMatKhau").style.display = "block";
+        return false;
+    }
+
+    document.getElementById("tbMatKhau").innerHTML = "";
+    document.getElementById("tbMatKhau").style.display = "none";
+    return true;
 }
 
-function showError(fieldId, message) {
-    const errorElement = document.getElementById(fieldId);
-    errorElement.textContent = message;
-    errorElement.style.display = message ? 'block' : 'none';
+    checkEmail(value, mess) {
+        const letter = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if (!value.match(letter)) {
+            document.getElementById("tbEmail").innerHTML = mess;
+             document.getElementById("tbEmail").style.display = "block";
+            return false;
+        }
+
+         document.getElementById("tbEmail").innerHTML = mess;
+        document.getElementById("tbEmail").style.display = "none";
+        return true;
+    }
+
+    checkSelectOption(idSelect, idNoti, mess) {
+        if (getEle(idSelect).selectedIndex !== 0) {
+            getEle(idNoti).innerHTML = "";
+            getEle(idNoti).style.display = "none";
+            return true;
+        }
+
+        getEle(idNoti).innerHTML = mess;
+        getEle(idNoti).style.display = "block";
+        return false;
+    }
+
+    checkIdExist(value, idNoti, mess, arr) {
+        let isExist = false;
+        for (let i = 0; i < arr.length; i++) {
+            const food = arr[i];
+            if (food.id === value) {
+                isExist = true;
+                break;
+            }
+        }
+
+        if (isExist) {
+            getEle(idNoti).innerHTML = mess;
+            getEle(idNoti).style.display = "block";
+            return false;
+        }
+
+        getEle(idNoti).innerHTML = "";
+        getEle(idNoti).style.display = "none";
+        return true;
+    }
 }
+
+export default Validation;

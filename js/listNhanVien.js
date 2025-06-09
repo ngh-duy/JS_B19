@@ -11,5 +11,12 @@ class lisNhanVien {
 searchByChucVu(keyword) {
     return this.arr.filter(nv => nv.xepLoai.toLowerCase().includes(keyword.toLowerCase()));
 }
+capNhatNhanVien(updatedNV) {
+    const index = this.arr.findIndex(nv => nv.id === updatedNV.id);
+    if (index !== -1) {
+        this.arr[index] = updatedNV;
+    }
+}
+
 }
 export default lisNhanVien;

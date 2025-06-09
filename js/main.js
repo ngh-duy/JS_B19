@@ -1,8 +1,9 @@
 import nhanVien from './NhanVien.js';
 import lisNhanVien from './listNhanVien.js';
-
+import validation from './validation.js';
 
     const listNV = new lisNhanVien();
+    const vali = new validation();
 export const getEle = (id) => { return document.getElementById(id).value; }
 // Lấy thông tin từ form
 
@@ -27,7 +28,9 @@ const getList = (nhanvien) => {
         <td>${nhanvien.chucVu}</td>
         <td>${nhanvien.tongLuong}</td>
         <td>${nhanvien.xepLoai}</td>
-        <td> <button type="button" onclick="getId('${nhanvien.id}')">KQ</button> </td>
+        <td> <button type="button" onclick="getId('${nhanvien.id}')">Xóa</button>
+      
+         </td>
     </tr>`;
 }
 const loadList = () => {
@@ -54,23 +57,14 @@ window.getId =(id)=>{
 
 document.getElementById("btnThemNV").onclick = () => {
     const info = getInfo();
-    const employees = JSON.parse(localStorage.getItem("DSNV")) || [];
-
-    // const isValid = checkForm(
-    //     info.id,
-    //     info.hoTen,
-    //     info.email,
-    //     info.matKhau,
-    //     info.ngayLam,
-    //     info.luongCB,
-    //     info.chucVu,
-    //     info.gioLam,
-    //     employees,
-    //     false
-    // );
-
-    // if (!isValid) return;
-
+    let check=vali.checkAccount( info.id, "Tài khoản tối đa 4 - 6 ký số");
+    check &=vali.checkName( info.hoTen,"Tên nhân viên phải là chữ");
+    check &= vali.checkEmail(   info.email, "Email phai dung dinh dang");
+    check &= vali.checkPassword( info.matKhau, "Mật Khẩu từ 6-10 ký tự (chứa ít nhất 1 ký tự số, 1 ký tự in hoa, 1 ký tự đặc biệt), không để trống");
+    check &= vali.checkLuongCoBan(info.luongCB, "Lương cơ bản 1 000 000 - 20 000 000");
+    check &= vali.checkChucVu( info.chucVu, "Chức vụ không hợp lệ");    
+    check &= vali.checkGioLam( info.gioLam, "+ Số giờ làm trong tháng 80 - 200 giờ");
+    if(!check) return ;
     const NV = new nhanVien(
         info.id,
         info.hoTen,
