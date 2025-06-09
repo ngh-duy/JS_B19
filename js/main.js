@@ -31,11 +31,13 @@ const getList = (nhanvien) => {
     </tr>`;
 }
 const loadList = () => {
-    const getLocalListNV = JSON.parse(localStorage.getItem("DSNV"));
+    const getLocalListNV = JSON.parse(localStorage.getItem("DSNV")) || [];
+    document.getElementById("tableDanhSach").innerHTML = '';  // Xóa bảng cũ trước khi thêm mới
     for (const EM of getLocalListNV) {
         document.getElementById("tableDanhSach").innerHTML += getList(EM);
     }
 }
+
 loadList();
 ///
 window.getId =(id)=>{
@@ -54,20 +56,20 @@ document.getElementById("btnThemNV").onclick = () => {
     const info = getInfo();
     const employees = JSON.parse(localStorage.getItem("DSNV")) || [];
 
-    const isValid = checkForm(
-        info.id,
-        info.hoTen,
-        info.email,
-        info.matKhau,
-        info.ngayLam,
-        info.luongCB,
-        info.chucVu,
-        info.gioLam,
-        employees,
-        false
-    );
+    // const isValid = checkForm(
+    //     info.id,
+    //     info.hoTen,
+    //     info.email,
+    //     info.matKhau,
+    //     info.ngayLam,
+    //     info.luongCB,
+    //     info.chucVu,
+    //     info.gioLam,
+    //     employees,
+    //     false
+    // );
 
-    if (!isValid) return;
+    // if (!isValid) return;
 
     const NV = new nhanVien(
         info.id,
@@ -84,3 +86,19 @@ document.getElementById("btnThemNV").onclick = () => {
     localStorage.setItem("DSNV", JSON.stringify(listNV.arr));
     loadList();
 };
+function renderList(arr) {
+    document.getElementById("tableDanhSach").innerHTML = '';
+    arr.forEach(nv => {
+        document.getElementById("tableDanhSach").innerHTML += getList(nv);
+    });
+}
+
+document.getElementById('searchName').addEventListener('input', function() {
+    const keyword = this.value.trim();
+    if (keyword === '') {
+        renderList(listNV.arr); // Hiển thị toàn bộ nếu input rỗng
+    } else {
+        const filtered = listNV.searchByChucVu(keyword);
+        renderList(filtered);
+    }
+});

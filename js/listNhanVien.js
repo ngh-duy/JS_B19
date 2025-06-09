@@ -9,7 +9,7 @@ class lisNhanVien {
         this.arr.splice(index,1);
     }
 searchByChucVu(keyword) {
-    return this.arr.filter(nv => nv.chucVu.toLowerCase().includes(keyword.toLowerCase()));
+    return this.arr.filter(nv => nv.xepLoai.toLowerCase().includes(keyword.toLowerCase()));
 }
 }
 export default lisNhanVien;
