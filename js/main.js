@@ -35,7 +35,7 @@ const getList = (nhanvien) => {
 }
 const loadList = () => {
     const getLocalListNV = JSON.parse(localStorage.getItem("DSNV")) || [];
-    document.getElementById("tableDanhSach").innerHTML = '';  // Xóa bảng cũ trước khi thêm mới
+    document.getElementById("tableDanhSach").innerHTML = '';  
     for (const EM of getLocalListNV) {
         document.getElementById("tableDanhSach").innerHTML += getList(EM);
     }
@@ -65,6 +65,10 @@ document.getElementById("btnThemNV").onclick = () => {
     check &= vali.checkChucVu( info.chucVu, "Chức vụ không hợp lệ");    
     check &= vali.checkGioLam( info.gioLam, "+ Số giờ làm trong tháng 80 - 200 giờ");
     if(!check) return ;
+     const getLocalListNV = JSON.parse(localStorage.getItem("DSNV")) || [];
+      const idIn = info.id;
+    const index =getLocalListNV.findIndex(obj => obj.id === idIn);
+    if(!index == -1) return alert("Tai khoảng sinh viên đã có ");
     const NV = new nhanVien(
         info.id,
         info.hoTen,
@@ -90,9 +94,33 @@ function renderList(arr) {
 document.getElementById('searchName').addEventListener('input', function() {
     const keyword = this.value.trim();
     if (keyword === '') {
-        renderList(listNV.arr); // Hiển thị toàn bộ nếu input rỗng
+        renderList(listNV.arr); 
     } else {
         const filtered = listNV.searchByChucVu(keyword);
         renderList(filtered);
     }
 });
+// cập nhật sinh viênviên
+document.getElementById("btnCapNhat").onclick = () => {
+    const info = getInfo(); 
+    const idIn = info.id;
+
+    const getLocalListNV = JSON.parse(localStorage.getItem("DSNV")) || [];
+
+    const index = getLocalListNV.findIndex(obj => obj.id === idIn);
+    console.log(index);
+
+    if (index !== -1) {
+
+        getLocalListNV[index].hoTen = info.hoTen;
+        getLocalListNV[index].email = info.email;
+        getLocalListNV[index].matKhau = info.matKhau;
+        getLocalListNV[index].ngayLam = info.ngayLam;
+        getLocalListNV[index].luongCB = info.luongCB;
+        getLocalListNV[index].chucVu = info.chucVu;
+        getLocalListNV[index].gioLam = info.gioLam;
+
+        localStorage.setItem("DSNV", JSON.stringify(getLocalListNV));
+    }
+    loadList();
+};
